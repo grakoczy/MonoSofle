@@ -1,0 +1,74 @@
+units:
+  # Proxy Spacing Variables
+  kx: U
+  ky: U
+  # Padding Variables
+  px: u - 5
+  py: u - 5
+  # outline
+  ox: U + 10
+  oy: U + 10
+points:
+  zones:
+    matrix:
+      key:
+        padding: 1ky
+        spread: 1kx
+      columns:
+        outer:
+          rows.mod.skip: true
+        pinky:
+        ring:
+          key.stagger: 5
+        middle:
+          key.stagger: 2.5
+        index:
+          key.stagger: -2.5
+        inner:
+          key.stagger: -2.5
+      rows:
+        bottom:
+        home:
+        top:
+        num:
+    thumbs:
+      key:
+        padding: 1ky
+        spread: 1kx
+      anchor:
+        ref: matrix_ring_bottom
+        shift: [0, -25]
+      columns:
+        layer:
+        mod1:
+          key.stagger: 2.5
+        mod2:
+          key.stagger: -2.5
+        space:
+          key.splay: -15
+          key.shift: [4, -3]
+        enter:
+          key:
+            width: 1.5kx
+            splay: 75
+            shift: [1,-8]
+      rows:
+        cluster:
+  rotate: -15
+  mirror: &mirror
+    ref: matrix_inner_num
+    distance: 72
+outlines:
+  keys:
+    - what: rectangle
+      where: true
+      size: [px, py]
+  board:
+    - what: rectangle
+      where: true
+      size: [ox, oy]
+# Combination preview showing outline and keys.
+  combo:
+    - name: board
+    - operation: subtract
+      name: keys
