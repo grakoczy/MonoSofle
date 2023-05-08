@@ -46,12 +46,12 @@ points:
           key.stagger: -2.5
         space:
           key.splay: -15
-          key.shift: [4, -3]
+          key.shift: [5, -4]
         enter:
           key:
             width: 1.5kx
             splay: 75
-            shift: [1,-8]
+            shift: [-2,-10]
       rows:
         cluster:
   rotate: -15
