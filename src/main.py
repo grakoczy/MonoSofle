@@ -132,7 +132,8 @@ oled_ext = Oled(
     device_address=0x3D,
     width=128,
     height=64,
-    rotation=270
+    rotation=270,
+    locks=locks
 )
 
 keyboard.extensions.append(oled_ext)
@@ -281,7 +282,7 @@ keyboard.keymap = [
         KC.N7,
         KC.N8,
         KC.N9,
-        KC.N0,
+        KC.CAPS,
         LOWER,
         RAISE,
     ],
