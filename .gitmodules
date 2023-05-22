@@ -1,5 +1,5 @@
 [submodule "kmk_firmware"]
-    path = kmk_firmware
-    url = git@github.com:grakoczy/kmk_firmware.git
+	path = kmk_firmware
+	url = git@github.com:grakoczy/kmk_firmware.git
     branch = master
 
