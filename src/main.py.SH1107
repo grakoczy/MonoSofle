@@ -9,7 +9,7 @@ displayio.release_displays()
 #oled_reset = board.D9
 
 import busio as io
-i2c = io.I2C(scl=board.GP17, sda=board.GP16)
+i2c = io.I2C(scl=board.GP1, sda=board.GP0)
 display_bus = displayio.I2CDisplay(i2c, device_address=0x3d)
 
 # SH1107 is vertically oriented 64x128
