@@ -1,9 +1,7 @@
 import board
-import pwmio
 import time
 
 from kb import KMKKeyboard
-# import logos
 
 from kmk.consts import UnicodeMode
 from kmk.handlers.sequences import compile_unicode_string_sequences as cuss
@@ -13,17 +11,13 @@ from kmk.keys import KC
 from kmk.extensions.speaker import SpeakerType
 from kmk.extensions.lock_status import LockStatus
 from kmk.extensions.media_keys import MediaKeys
-# from kmk.extensions.oled_1306 import DisplayOLED, LogoScene, StatusScene  # , KeypressesScene
 from kmk.extensions.rgb import RGB, AnimationModes
-# from kmk.extensions.RGB import RGB
-# from kmk.extensions.wpm import WPM
 from kmk.modules.encoder import EncoderHandler
-# from kmk.modules.layers import Layers
 from kmk.modules.layers import Layers as _Layers
 from kmk.modules.modtap import ModTap
 from kmk.modules.mouse_keys import MouseKeys
 from kmk.modules.oneshot import OneShot
-from kmk.modules.pimoroni_trackball import Trackball, TrackballMode, PointingHandler, KeyHandler, ScrollHandler, ScrollDirection
+from kmk.modules.azoteq_iqs5xx import Touchpad
 from kmk.modules.tapdance import TapDance
 from kmk.extensions.oled_sh1107 import (
     Oled,
@@ -60,10 +54,9 @@ keyboard = KMKKeyboard()
 speakertype = SpeakerType(enabled=False)
 locks = LockStatus()
 mediakeys = MediaKeys()
-# rgb = RGB(pixel_pin=14, num_pixels=1)
-# wpm = WPM(debug=False)
+
 keyboard.extensions = [locks, mediakeys, speakertype]  # , wpm]  # , rgb]
-# keyboard.extensions = [locks, mediakeys]  # , wpm]  # , rgb]
+
 
 # Modules
 # layers = Layers()
@@ -83,14 +76,8 @@ tapdance.tap_time = 750
 #     (board.GP12, board.GP13, None, False, 2),  # roller
 # )
 
-# Trackball
-trackball = Trackball(i2c, mode=TrackballMode.MOUSE_MODE, handlers=[
-    PointingHandler(),
-    # on layer 1 and above use the default pointing behavior
-    ScrollHandler(scroll_direction=ScrollDirection.REVERSE),
-    # act like an encoder, input arrow keys
-    KeyHandler(KC.UP, KC.RIGHT, KC.DOWN, KC.LEFT, KC.ENTER),
-])
+#Touchpad
+touchpad = Touchpad(i2c, rdy_pin=board.GP17, reset_pin=board.GP16)
 
 # Neopixel on XIAO RP2040
 frontglow = RGB(
@@ -139,7 +126,7 @@ oled_ext = Oled(
 keyboard.extensions.append(oled_ext)
 
 keyboard.modules = [Layers(), modtap, mousekeys,
-                    oneshot, tapdance, trackball]#, oled]#encoders
+                    oneshot, tapdance, touchpad]#, oled]#encoders
 
 keyboard.debug_enabled = False
 keyboard.tap_time = 100
@@ -172,36 +159,6 @@ ZOOM_IN = KC.LCTRL(KC.EQUAL)
 ZOOM_OUT = KC.LCTRL(KC.MINUS)
 ZOOM_RST = KC.LCTRL(KC.N0)
 
-# emoji = cuss({
-#     # Emoji
-#     'BEER': r'🍺',
-#     'BEER_TOAST': r'🍻',
-#     'FACE_CUTE_SMILE': r'😊',
-#     'FACE_HEART_EYES': r'😍',
-#     'FACE_JOY': r'😂',
-#     'FACE_SWEAT_SMILE': r'😅',
-#     'FACE_THINKING': r'🤔',
-#     'FIRE': r'🔥',
-#     'FLAG_CA': r'🇨🇦',
-#     'FLAG_US': r'🇺🇸',
-#     'HAND_CLAP': r'👏',
-#     'HAND_HORNS': r'🤘',
-#     'HAND_OK': r'👌',
-#     'HAND_THUMB_DOWN': r'👎',
-#     'HAND_THUMB_UP': r'👍',
-#     'HAND_WAVE': r'👋',
-#     'HEART': r'❤️',
-#     'MAPLE_LEAF': r'🍁',
-#     'PIEN': r'🥺',
-#     'POOP': r'💩',
-#     'TADA': r'🎉',
-
-#     # Kaomoji
-#     'ANGRY_TABLE_FLIP': r'(ノಠ痊ಠ)ノ彡┻━┻',
-#     'CELEBRATORY_GLITTER': r'+｡:.ﾟヽ(´∀｡)ﾉﾟ.:｡+ﾟﾟ+｡:.ﾟヽ(*´∀)ﾉﾟ.:｡+ﾟ',
-#     'SHRUGGIE': r'¯\_(ツ)_/¯',
-#     'TABLE_FLIP': r'(╯°□°）╯︵ ┻━┻',
-# })
 
 # flake8: noqa
 # Keyboard mapping
@@ -266,10 +223,6 @@ ZOOM_RST = KC.LCTRL(KC.N0)
 #     ),
 # ]
 
-# Trackball setup
-trackball.set_rgbw(255, 128, 0, 0)
-time.sleep(0.25)
-trackball.set_rgbw(4, 8, 32, 0)
 
 keyboard.keymap = [
     [
