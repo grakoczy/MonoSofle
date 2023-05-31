@@ -24,8 +24,6 @@ from kmk.extensions.oled_sh1107 import (
     OledData,
 )
 
-from kmk.extensions.oled_1306 import DisplayOLED, LogoScene, StatusScene 
-
 from micropython import const
 
 import busio as io
@@ -68,13 +66,13 @@ oneshot.tap_time = 1000
 tapdance = TapDance()
 tapdance.tap_time = 750
 
-# # Rotary encoders
-# encoders = EncoderHandler()
-# encoders.pins = (
+# Rotary encoders
+encoders = EncoderHandler()
+encoders.pins = (
 #     (board.GP14, board.GP15, None, False, 4),  # encoder L
 #     (board.GP17, board.GP16, None, False, 4),  # encoder R
-#     (board.GP12, board.GP13, None, False, 2),  # roller
-# )
+    (board.GP18, board.GP19, None, False, 2),  # roller
+)
 
 #Touchpad
 touchpad = Touchpad(i2c, rdy_pin=board.GP17, reset_pin=board.GP16)
@@ -116,17 +114,17 @@ oled_ext = Oled(
         ]
     ),
     i2c=i2c,
-    device_address=0x3D,
+    device_address=0x3C,
     width=128,
     height=64,
-    rotation=270,
+    rotation=90,
     locks=locks
 )
 
 keyboard.extensions.append(oled_ext)
 
 keyboard.modules = [Layers(), modtap, mousekeys,
-                    oneshot, tapdance, touchpad]#, oled]#encoders
+                    oneshot, tapdance, touchpad, encoders]#, oled]#
 
 keyboard.debug_enabled = False
 keyboard.tap_time = 100
@@ -223,6 +221,11 @@ ZOOM_RST = KC.LCTRL(KC.N0)
 #     ),
 # ]
 
+# Rotary Encoder (1 encoder / 1 definition per layer)
+encoders.map = [((KC.UP, KC.DOWN, None),), # Base
+                ((KC.VOLD, KC.VOLU, None),), # Lower
+                ]
+
 
 keyboard.keymap = [
     [
@@ -241,6 +244,7 @@ keyboard.keymap = [
     ],
 ]
 
+keyboard.debug_enabled = True
 
 # Main
 if __name__ == '__main__':
