@@ -49,7 +49,7 @@ i2c.unlock()
 keyboard = KMKKeyboard()
 
 # Extensions
-speakertype = SpeakerType(enabled=False)
+speakertype = SpeakerType(enabled=False, pin=board.GP20)
 locks = LockStatus()
 mediakeys = MediaKeys()
 
@@ -109,7 +109,8 @@ oled_ext = Oled(
             OledData.oled_text_entry(text="BASE", x=40, y=20, layer=0),
             OledData.oled_text_entry(text="LOWER", x=40, y=20, layer=1),
             OledData.oled_text_entry(text="RAISE", x=40, y=20, layer=2),
-            OledData.oled_text_entry(text="ADJUST", x=40, y=20, layer=3),
+            OledData.oled_text_entry(text="NUMPAD", x=40, y=20, layer=3),
+            OledData.oled_text_entry(text="ADJUST", x=40, y=20, layer=4),
             OledData.oled_image_entry(image="\g.bmp", x=80, y=0),
         ]
     ),
@@ -146,13 +147,18 @@ LALTAGR = KC.TD(KC.LALT, KC.RALT)
 RALTAGR = KC.TD(KC.RALT, KC.RGUI)
 
 LOWER = KC.MO(1)
-RAISE = KC.MO(2)
-ADJUST = KC.LT(3, KC.LGUI)
+RAISE = KC.MO(2) 
+NUM = KC.LT(3, KC.TAB)
+ADJUST = KC.LT(4, KC.LGUI)
+
 
 BASE = KC.DF(0)
 
 UNDO = KC.LCTRL(KC.Z)
 REDO = KC.LCTRL(KC.Y)
+CUT = KC.LCTRL(KC.X)
+COPY = KC.LCTRL(KC.C)
+PASTE = KC.LCTRL(KC.V)
 ZOOM_IN = KC.LCTRL(KC.EQUAL)
 ZOOM_OUT = KC.LCTRL(KC.MINUS)
 ZOOM_RST = KC.LCTRL(KC.N0)
@@ -160,42 +166,110 @@ ZOOM_RST = KC.LCTRL(KC.N0)
 
 # flake8: noqa
 # Keyboard mapping
-# keyboard.keymap = [
+keyboard.keymap = [
+    #   QWERTY
+    #   ,-----------------------------------------.                    ,-----------------------------------------.
+    #   | ESC  |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  |  `   |
+    #   |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #   | TAB  |   Q  |   W  |   E  |   R  |   T  |                    |   Y  |   U  |   I  |   O  |   P  | Bspc |
+    #   |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #   |LShift|   A  |   S  |   D  |   F  |   G  |                    |   H  |   J  |   K  |   L  |   ;  |  '   |
+    #   |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #   |SPACE |   Z  |   X  |   C  |   V  |   B  |                    |   N  |   M  |   ,  |   .  |   /  |LShift|
+    #   `-----------------------------------------/                    \-----------------------------------------'
 
-#     [  # base: qwerty (test)
-#         KC.Q,      KC.W,      KC.E,      KC.R,      KC.T,      KC.OLED_TOG,           KC.MUTE,   KC.Y,      KC.U,      KC.I,     KC.O,      KC.P,
-#         KC.A,      KC.S,      KC.D,      KC.F,      KC.G,      KC.TB_NEXT_HANDLER,               KC.H,      KC.J,      KC.K,     KC.L,      KC.SCLN,
-#         KC.Z,      KC.X,      KC.C,      KC.V,      KC.B,      KC.LBRC,               KC.RBRC,   KC.N,      KC.M,      KC.COMM,  KC.DOT,    KC.SLSH,
-#         LSFTALT,   OSLSFT,    KC.TAB,    KC.LALT,   KC.LCTRL,  KC.SPC,                KC.RSFT,   KC.BSPC,   RALTAGR,   KC.MINUS, KC.RSFT,   KC.ENT,
-#         KC.GESC,   ADJUST,    LOWER,                                                                        RAISE,     APPRGUI,  KC.QUOT,
-#     ],
+    #                        |LCTRL |LOWER |Enter |                    |RCTRL |RAISE | RAlt |
+    #                        |------|------|------|                    |------|------|------|
+    #                               | LAlt | WIN  |                    |ENTER |SPACE |
+    #                               `-------------'                    '-------------'      
+    [  # base: qwerty 
+        KC.ESC,    KC.N1,     KC.N2,     KC.N3,     KC.N4,     KC.N5,                         KC.N6,     KC.N7,     KC.N8,    KC.N9,     KC.N0,      KC.GRV,
+        NUM,       KC.Q,      KC.W,      KC.E,      KC.R,      KC.T,                          KC.Y,      KC.U,      KC.I,     KC.O,      KC.P,      KC.BSPC,
+        KC.CAPS,   KC.A,      KC.S,      KC.D,      KC.F,      KC.G,                          KC.H,      KC.J,      KC.K,     KC.L,      KC.SCLN,   KC.QUOTE,
+        KC.LSFT,   KC.Z,      KC.X,      KC.C,      KC.V,      KC.B,                          KC.N,      KC.M,      KC.COMM,  KC.DOT,    KC.SLSH,   KC.RSFT,
+
+                                         KC.LCTRL,  LOWER,     KC.ENTER,                      KC.RCTRL,    RAISE,     KC.RALT,
+                                                    KC.LALT,   KC.LWIN,                       KC.ENTER,    KC.SPC,
+    ],
+
+    #    LOWER
+    #   ,-----------------------------------------.                    ,-----------------------------------------.
+    #   |TRANS |  F1  |  F2  |  F3  |  F4  |  F5  |                    |  F6  |  F7  |  F8  |  F9  | F10  | F11  |
+    #   |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #   |  `   |   1  |   2  |   3  |   4  |   5  |                    |   6  |   7  |   8  |   9  |   0  | F12  |
+    #   |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #   |TRANS |   !  |   @  |   #  |   $  |   %  |                    |   ^  |   &  |   *  |   (  |   )  |  |   |
+    #   |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #   |TRANS |   =  |   -  |   +  |   {  |   }  |                    |   [  |   ]  |   ;  |   :  |   \  |LShift|
+    #   `-----------------------------------------/                    \-----------------------------------------'
+
+    #                        |LCTRL |LOWER |Enter |                    |RCTRL |RAISE | RAlt |
+    #                        |------|------|------|                    |------|------|------|
+    #                               | LAlt | WIN  |                    |ENTER |SPACE |
+    #                               `-------------'                    '-------------'
+    [  # base: lower 
+        _______,  KC.F1,     KC.F2,     KC.F3,     KC.F4,     KC.F5,                           KC.F6,     KC.F7,     KC.F8,    KC.F9,     KC.F10,     KC.F11,
+        KC.GRV,   KC.N1,     KC.N2,     KC.N3,     KC.N4,     KC.N5,                           KC.N6,     KC.N7,     KC.N8,    KC.N9,     KC.N0,      KC.F12,
+        _______,  KC.ECLM,   KC.AT,     KC.HASH,   KC.DLR,    KC.PERC,                         KC.CIRC,   KC.AMPR,   KC.ASTR,  KC.LPRN,   KC.RPRN,    KC.PIPE,
+        KC.LSFT,  KC.EQL,    KC.MINUS,  KC.PLUS,   KC.LCBR,   KC.RCBR,                         KC.LBRC,   KC.RBRC,   KC.SCLN,  KC.COLON,  KC.BSLASH,  KC.RSFT,  
+
+                                         KC.LCTRL,  LOWER,     KC.ENTER,                      KC.RCTRL,    RAISE,     KC.RALT,
+                                                    KC.LALT,   KC.LWIN,                       KC.ENTER,    KC.SPC,
+    ],
+
+    # RAISE
+    #  ,----------------------------------------.                     ,-----------------------------------------.
+    #  |      |      |      |      |      |      |                    |      |      |      |      |      |      |
+    #  |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #  | Esc  | Ins  | Pscr | Menu |      |      |                    |      | PWrd |  Up  | NWrd | DLine| Bspc |
+    #  |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #  | Tab  | LAt  | LCtl |LShift|      | Caps |                    |      | Left | Down | Rigth|  Del | Bspc |
+    #  |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #  |Shift | Undo |  Cut | Copy | Paste|      |                    |      | LStr |      | LEnd |      | Shift|
+    #  `-----------------------------------------/                    \-----------------------------------------'
+
+    #                        |LCTRL |LOWER |Enter |                    |RCTRL |RAISE | RAlt |
+    #                        |------|------|------|                    |------|------|------|
+    #                               | LAlt | WIN  |                    |ENTER |SPACE |
+    #                               `-------------'                    '-------------'
+    [ # base: rise
+        _______,   _______,   _______,   _______,   _______,   _______,                         _______,   _______,   _______,   _______,   _______,   _______,
+        KC.ESC,    KC.INS,    KC.PSCR,   KC.APP,    XXXXXXX,   XXXXXXX,                         KC.PGUP,   XXXXXXX,   KC.UP,     XXXXXXX,   XXXXXXX,   KC.BSPC,
+        KC.TAB,    KC.LALT,   KC.LCTRL,  KC.LSFT,   XXXXXXX,   KC.CAPS,                         KC.PGDN,   KC.LEFT,   KC.DOWN,   KC.RIGHT,  KC.DEL,    KC.BSPC,
+        KC.LSFT,   UNDO,      CUT,       COPY,      PASTE,     XXXXXXX,                         XXXXXXX,   KC.HOME,   XXXXXXX,   KC.END,    XXXXXXX,   KC.RSFT, 
+
+                                        KC.LCTRL,  LOWER,     KC.ENTER,                         KC.RCTRL,    RAISE,     KC.RALT,
+                                                   KC.LALT,   KC.LWIN,                          KC.ENTER,    KC.SPC,
+    ],
+
+    # NUMPAD
+    # ,-----------------------------------------.                    ,-----------------------------------------.
+    # | trans|      |      |      |      |      |                    |      |      |      |      |      |      |
+    # |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    # | trans|      |      |      |      |      |                    |   ^  |   7  |   8  |   9  |   *  |      |
+    # |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    # | trans|      |      |      |      |      |                    |   -  |   4  |   5  |   6  |      |   |  |
+    # |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    # | trans|      |      |      |      |      |                    |   +  |   1  |   2  |   3  |   \  | Shift|
+    # `-----------------------------------------/                    \-----------------------------------------'
+    
+    #                        |LCTRL |LOWER |Enter |                    |RCTRL |RAISE | RAlt |
+    #                        |------|------|------|                    |------|------|------|
+    #                               | LAlt | WIN  |                    |ENTER |SPACE |
+    #                               `-------------'                    '-------------'
+
+    [ # base: NUMPAD
+        _______,  _______,   _______,   _______,   _______,   _______,                         XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,
+        _______,  _______,   _______,   _______,   _______,   _______,                         XXXXXXX,   KC.P7,     KC.P8,     KC.P9,     KC.PAST,   XXXXXXX,
+        _______,  _______,   _______,   _______,   _______,   _______,                         KC.PMNS,   KC.P4,     KC.P5,     KC.P6,     XXXXXXX,   KC.PIPE, 
+        _______,  _______,   _______,   _______,   _______,   _______,                         KC.PPLS,   KC.P1,     KC.P2,     KC.P3,     KC.PSLS,   XXXXXXX, 
+
+                                        KC.LCTRL,  LOWER,     KC.ENTER,                        KC.RCTRL,    RAISE,     KC.RALT,
+                                                   KC.LALT,   KC.LWIN,                         KC.ENTER,    KC.SPC,
+    ],
 
 
-#     [  # lower: fn/num
-#         KC.F1,     KC.F2,     KC.F3,     KC.F4,     KC.F5,     _______,               ZOOM_RST,  KC.PAST,   KC.N7,     KC.N8,    KC.N9,     KC.BSPC,
-#         KC.F6,     KC.F7,     KC.F8,     KC.F9,     KC.F10,    _______,                          KC.PSLS,   KC.N4,     KC.N5,    KC.N6,     KC.PMNS,
-#         XXXXXXX,   XXXXXXX,   XXXXXXX,   KC.F11,    KC.F12,    KC.GRV,                KC.BSLS,   KC.INS,    KC.N1,     KC.N2,    KC.N3,     KC.PPLS,
-#         _______,   _______,   _______,   _______,   _______,   KC.MB_LMB,             KC.MB_RMB, _______,   KC.LPRN,   KC.N0,    KC.RPRN,   _______,
-#         _______,   _______,   XXXXXXX,                                                                      XXXXXXX,   KC.EQL,   KC.DEL,
-#     ],
-
-#     [  # raise: sym/nav
-#         KC.EXLM,   KC.CIRC,   KC.AMPR,   KC.DLR,    KC.PERC,   _______,               ZOOM_RST,  KC.VOLU,   UNDO,      REDO,     KC.HOME,   KC.BSPC,
-#         XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   _______,                          KC.VOLD,   XXXXXXX,   XXXXXXX,  KC.END,    KC.PGUP,
-#         XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC.AT,                 KC.HASH,   KC.MUTE,   XXXXXXX,   KC.UP,    XXXXXXX,   KC.PGDOWN,
-#         XXXXXXX,   _______,   _______,   _______,   _______,   KC.NLCK,               KC.CAPS,   KC.PSCR,   KC.LEFT,   KC.DOWN,  KC.RIGHT,  _______,
-#         _______,   BASE,      XXXXXXX,                                                                      XXXXXXX,   XXXXXXX,  KC.DEL,
-#     ],
-
-#     [  # adjust: emoji
-#         KC.Q,      KC.W,      KC.E,      KC.R,      KC.T,      KC.TB_NEXT_HANDLER,    KC.MUTE,   KC.Y,      KC.U,      KC.I,     KC.O,      KC.P,
-#         KC.A,      KC.S,      KC.D,      KC.F,      KC.G,      KC.OLED_TOG,                      KC.H,      KC.J,      KC.K,     KC.L,      KC.SCLN,
-#         KC.Z,      KC.X,      KC.C,      KC.V,      KC.B,      KC.LBRC,               KC.RBRC,   KC.N,      KC.M,      KC.COMM,  KC.DOT,    KC.SLSH,
-#         LSFTCTL,   KC.TAB,    OSLSFT,    KC.CAPS,   LALTAGR,   KC.SPC,                KC.SPC,    KC.RALT,   KC.BSPC,   KC.RSFT,  KC.MINUS,  emoji.PIEN,
-#         KC.GESC,   XXXXXXX,   LOWER,                                                                        XXXXXXX,   COLEMAK,  BASE,
-#     ],
-
-# ]
+]
 
 # # Encoders mapping
 # encoders.map = [
@@ -222,27 +296,27 @@ ZOOM_RST = KC.LCTRL(KC.N0)
 # ]
 
 # Rotary Encoder (1 encoder / 1 definition per layer)
-encoders.map = [((KC.UP, KC.DOWN, None),), # Base
-                ((KC.VOLD, KC.VOLU, None),), # Lower
+encoders.map = [((KC.VOLD,    KC.VOLU,  None)),# Base
+                ((KC.MW_DOWN, KC.MW_UP, None)) # Lower 
                 ]
 
 
-keyboard.keymap = [
-    [
-        KC.N1,
-        KC.N2,
-        KC.N3,
-        KC.N4,
-        KC.N5,
-        KC.N6,
-        KC.N7,
-        KC.N8,
-        KC.N9,
-        KC.CAPS,
-        LOWER,
-        RAISE,
-    ],
-]
+# keyboard.keymap = [
+#     [
+#         KC.N1,
+#         KC.N2,
+#         KC.N3,
+#         KC.N4,
+#         KC.N5,
+#         KC.N6,
+#         KC.N7,
+#         KC.N8,
+#         KC.N9,
+#         KC.CAPS,
+#         LOWER,
+#         RAISE,
+#     ],
+# ]
 
 keyboard.debug_enabled = True
 
