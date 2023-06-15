@@ -67,11 +67,9 @@ tapdance = TapDance()
 tapdance.tap_time = 750
 
 # Rotary encoders
-encoders = EncoderHandler()
-encoders.pins = (
-#     (board.GP14, board.GP15, None, False, 4),  # encoder L
-#     (board.GP17, board.GP16, None, False, 4),  # encoder R
-    (board.GP18, board.GP19, None, False, 2),  # roller
+encoder = EncoderHandler()
+encoder.pins = (
+    (board.GP19, board.GP18, None, True, 2),  # roller
 )
 
 #Touchpad
@@ -125,7 +123,7 @@ oled_ext = Oled(
 keyboard.extensions.append(oled_ext)
 
 keyboard.modules = [Layers(), modtap, mousekeys,
-                    oneshot, tapdance, touchpad, encoders]#, oled]#
+                    oneshot, tapdance, touchpad, encoder]#, oled]#
 
 keyboard.debug_enabled = False
 keyboard.tap_time = 100
@@ -147,7 +145,8 @@ LALTAGR = KC.TD(KC.LALT, KC.RALT)
 RALTAGR = KC.TD(KC.RALT, KC.RGUI)
 
 LOWER = KC.MO(1)
-RAISE = KC.MO(2) 
+# RAISE = KC.MO(2) 
+RAISE = KC.LT(2, KC.SPC, tap_time=250)
 NUM = KC.LT(3, KC.TAB)
 ADJUST = KC.LT(4, KC.LGUI)
 
@@ -158,7 +157,7 @@ UNDO = KC.LCTRL(KC.Z)
 REDO = KC.LCTRL(KC.Y)
 CUT = KC.LCTRL(KC.X)
 COPY = KC.LCTRL(KC.C)
-PASTE = KC.LCTRL(KC.V)
+PASTE = KC.LCTRL(KC.V)  
 ZOOM_IN = KC.LCTRL(KC.EQUAL)
 ZOOM_OUT = KC.LCTRL(KC.MINUS)
 ZOOM_RST = KC.LCTRL(KC.N0)
@@ -178,7 +177,7 @@ keyboard.keymap = [
     #   |SPACE |   Z  |   X  |   C  |   V  |   B  |                    |   N  |   M  |   ,  |   .  |   /  |LShift|
     #   `-----------------------------------------/                    \-----------------------------------------'
 
-    #                        |LCTRL |LOWER |Enter |                    |RCTRL |RAISE | RAlt |
+    #                        |LCTRL |LOWER |Enter |        LMB         |RCTRL |RAISE | RAlt |
     #                        |------|------|------|                    |------|------|------|
     #                               | LAlt | WIN  |                    |ENTER |SPACE |
     #                               `-------------'                    '-------------'      
@@ -188,7 +187,7 @@ keyboard.keymap = [
         KC.CAPS,   KC.A,      KC.S,      KC.D,      KC.F,      KC.G,                          KC.H,      KC.J,      KC.K,     KC.L,      KC.SCLN,   KC.QUOTE,
         KC.LSFT,   KC.Z,      KC.X,      KC.C,      KC.V,      KC.B,                          KC.N,      KC.M,      KC.COMM,  KC.DOT,    KC.SLSH,   KC.RSFT,
 
-                                         KC.LCTRL,  LOWER,     KC.ENTER,                      KC.RCTRL,    RAISE,     KC.RALT,
+                                         KC.LCTRL,  LOWER,     KC.ENTER,       KC.MB_LMB,     KC.RCTRL,    RAISE,     KC.RALT,
                                                     KC.LALT,   KC.LWIN,                       KC.ENTER,    KC.SPC,
     ],
 
@@ -213,7 +212,7 @@ keyboard.keymap = [
         _______,  KC.ECLM,   KC.AT,     KC.HASH,   KC.DLR,    KC.PERC,                         KC.CIRC,   KC.AMPR,   KC.ASTR,  KC.LPRN,   KC.RPRN,    KC.PIPE,
         KC.LSFT,  KC.EQL,    KC.MINUS,  KC.PLUS,   KC.LCBR,   KC.RCBR,                         KC.LBRC,   KC.RBRC,   KC.SCLN,  KC.COLON,  KC.BSLASH,  KC.RSFT,  
 
-                                         KC.LCTRL,  LOWER,     KC.ENTER,                      KC.RCTRL,    RAISE,     KC.RALT,
+                                         KC.LCTRL,  LOWER,     KC.ENTER,      _______,        KC.RCTRL,    RAISE,     KC.RALT,
                                                     KC.LALT,   KC.LWIN,                       KC.ENTER,    KC.SPC,
     ],
 
@@ -224,7 +223,7 @@ keyboard.keymap = [
     #  | Esc  | Ins  | Pscr | Menu |      |      |                    |      | PWrd |  Up  | NWrd | DLine| Bspc |
     #  |------+------+------+------+------+------|                    |------+------+------+------+------+------|
     #  | Tab  | LAt  | LCtl |LShift|      | Caps |                    |      | Left | Down | Rigth|  Del | Bspc |
-    #  |------+------+------+------+------+------|                    |------+------+------+------+------+------|
+    #  |------+------+------+------+------+------|                    |------+----/--+------+------+------+------|
     #  |Shift | Undo |  Cut | Copy | Paste|      |                    |      | LStr |      | LEnd |      | Shift|
     #  `-----------------------------------------/                    \-----------------------------------------'
 
@@ -238,7 +237,7 @@ keyboard.keymap = [
         KC.TAB,    KC.LALT,   KC.LCTRL,  KC.LSFT,   XXXXXXX,   KC.CAPS,                         KC.PGDN,   KC.LEFT,   KC.DOWN,   KC.RIGHT,  KC.DEL,    KC.BSPC,
         KC.LSFT,   UNDO,      CUT,       COPY,      PASTE,     XXXXXXX,                         XXXXXXX,   KC.HOME,   XXXXXXX,   KC.END,    XXXXXXX,   KC.RSFT, 
 
-                                        KC.LCTRL,  LOWER,     KC.ENTER,                         KC.RCTRL,    RAISE,     KC.RALT,
+                                        KC.LCTRL,  LOWER,     KC.ENTER,         _______,        KC.RCTRL,    RAISE,     KC.RALT,
                                                    KC.LALT,   KC.LWIN,                          KC.ENTER,    KC.SPC,
     ],
 
@@ -264,7 +263,7 @@ keyboard.keymap = [
         _______,  _______,   _______,   _______,   _______,   _______,                         KC.PMNS,   KC.P4,     KC.P5,     KC.P6,     XXXXXXX,   KC.PIPE, 
         _______,  _______,   _______,   _______,   _______,   _______,                         KC.PPLS,   KC.P1,     KC.P2,     KC.P3,     KC.PSLS,   XXXXXXX, 
 
-                                        KC.LCTRL,  LOWER,     KC.ENTER,                        KC.RCTRL,    RAISE,     KC.RALT,
+                                        KC.LCTRL,  LOWER,     KC.ENTER,         _______,        KC.RCTRL,    RAISE,     KC.RALT,
                                                    KC.LALT,   KC.LWIN,                         KC.ENTER,    KC.SPC,
     ],
 
@@ -296,8 +295,9 @@ keyboard.keymap = [
 # ]
 
 # Rotary Encoder (1 encoder / 1 definition per layer)
-encoders.map = [((KC.VOLD,    KC.VOLU,  None)),# Base
-                ((KC.MW_DOWN, KC.MW_UP, None)) # Lower 
+encoder.map = [((KC.MW_DOWN, KC.MW_UP, None),),# Base
+               ((KC.VOLD,    KC.VOLU,  None),), # Lower 
+               ((KC.VOLD,    KC.VOLU,  None),), # Raise
                 ]
 
 
