@@ -19,10 +19,12 @@ from kmk.modules.mouse_keys import MouseKeys
 from kmk.modules.oneshot import OneShot
 from kmk.modules.azoteq_iqs5xx import Touchpad
 from kmk.modules.tapdance import TapDance
-from kmk.extensions.oled_sh1107 import (
-    Oled,
-    OledData,
-)
+# from kmk.extensions.oled_sh1107 import (
+#     Oled,
+#     OledData,
+# )
+from kmk.extensions.oled_sh1107 import Oled, TextEntry, ImageEntry#, LockType
+
 
 from micropython import const
 
@@ -82,8 +84,8 @@ frontglow = RGB(
     num_pixels=1,
     hue_default=4,
     sat_default=10,
-    val_limit=100,
-    val_default=50,
+    val_limit=200,
+    val_default=20,
     # animation_mode=AnimationModes.STATIC,
 )
 keyboard.extensions.append(frontglow)
@@ -91,36 +93,57 @@ keyboard.extensions.append(frontglow)
 
 class Layers(_Layers):
     last_top_layer = 0
-    hues = (4, 50, 150)
-    sats = (10, 255, 255)
+    last_caps = False
+    hues = (4, 50, 150, 220)
+    sats = (10, 255, 255, 255)
     
     def after_hid_send(self, keyboard):
+        if locks.get_caps_lock() and locks.get_caps_lock() != self.last_caps:
+            val = 80
+            self.last_caps = True
+            frontglow.set_hsv_fill(self.hues[keyboard.active_layers[0]], self.sats[keyboard.active_layers[0]], val)
+        elif locks.get_caps_lock() == False: 
+            val = 20
+            self.last_caps = False
+            frontglow.set_hsv_fill(self.hues[keyboard.active_layers[0]], self.sats[keyboard.active_layers[0]], val)
         if keyboard.active_layers[0] != self.last_top_layer:
             self.last_top_layer = keyboard.active_layers[0]
-            frontglow.set_hsv_fill(self.hues[self.last_top_layer], self.sats[self.last_top_layer], 50)
+            frontglow.set_hsv_fill(self.hues[self.last_top_layer], self.sats[self.last_top_layer], val)
 
 # keyboard.modules.append(Layers())
 
 oled_ext = Oled(
-    OledData(
-        entries=[
-            OledData.oled_text_entry(text="DactylTouch", x=0, y=0),
-            OledData.oled_text_entry(text="KB2040", x=0, y=10),
-            OledData.oled_text_entry(text="Layer: ", x=0, y=20),
-            OledData.oled_text_entry(text="BASE", x=40, y=20, layer=0),
-            OledData.oled_text_entry(text="LOWER", x=40, y=20, layer=1),
-            OledData.oled_text_entry(text="RAISE", x=40, y=20, layer=2),
-            OledData.oled_text_entry(text="NUMPAD", x=40, y=20, layer=3),
-            OledData.oled_text_entry(text="ADJUST", x=40, y=20, layer=4),
-            OledData.oled_image_entry(image="\g.bmp", x=80, y=0),
-        ]
-    ),
+    # OledData(
+    entries=[
+        TextEntry(text="DactylTouch", x=0, y=0),
+        TextEntry(text="KB2040", x=0, y=10),
+        TextEntry(text="Layer: ", x=0, y=20),
+        TextEntry(text="BASE", x=40, y=20, layer=0),
+        TextEntry(text="LOWER", x=40, y=20, layer=1),
+        TextEntry(text="RAISE", x=40, y=20, layer=2),
+        TextEntry(text="NUMPAD", x=40, y=20, layer=3),
+        TextEntry(text="ADJUST", x=40, y=20, layer=4),
+        # TextEntry(text="CAPS", x=0, y=50, lock="CAPS"),
+        ImageEntry(image="\g.bmp", x=80, y=0),
+    ],
+    # ),
     i2c=i2c,
     device_address=0x3C,
     width=128,
     height=64,
+    flip=False,
+    flip_left=False,
+    flip_right=True,
+    dim_time=10,
+    dim_target=0.1,
+    off_time=30,
+    powersave_dim_time=5,
+    powersave_dim_target=0.1,
+    powersave_off_time=15,
+    brightness=1,
+    brightness_step=0.1,
     rotation=90,
-    locks=locks
+    # locks=locks
 )
 
 keyboard.extensions.append(oled_ext)
